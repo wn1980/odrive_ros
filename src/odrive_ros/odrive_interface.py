@@ -241,6 +241,7 @@ class ODriveInterfaceAPI(object):
         #self.logger.debug("Setting drive mode.")
         for axis in self.axes:
             #axis.controller.vel_setpoint = 0
+            axis.controller.input_vel = 0
             axis.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
             axis.controller.config.control_mode = CONTROL_MODE_VELOCITY_CONTROL
         
@@ -304,7 +305,7 @@ class ODriveInterfaceAPI(object):
     def right_pos(self):          return self.right_axis.encoder.pos_cpr       if self.right_axis else 0   # sign!
     
     # TODO check these match the right motors, but it doesn't matter for now
-    def left_temperature(self):   return self.left_axis.motor.get_inverter_temp()  if self.left_axis  else 0.
+    def left_temperature(self):   return self.left_axis.motor.get_inverter_temp()  if self.left_axis  else 0. #axis.fet_thermistor.temperature
     def right_temperature(self):  return self.right_axis.motor.get_inverter_temp() if self.right_axis else 0.
     
     def left_current(self):       return self.left_axis.motor.current_control.Ibus  if self.left_axis and self.left_axis.current_state > 1 else 0.
@@ -329,4 +330,3 @@ class ODriveInterfaceAPI(object):
     def right_state(self):      return self.MOTOR_STATES[self.right_axis.current_state] if self.right_axis else "NOT_CONNECTED"
     
     def bus_voltage(self):      return self.driver.vbus_voltage if self.left_axis else 0.
-    
