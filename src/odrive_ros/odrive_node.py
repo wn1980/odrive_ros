@@ -21,11 +21,11 @@ import diagnostic_updater, diagnostic_msgs.msg
 import time
 import math
 import traceback
-import Queue
+from multiprocessing import Queue
 
-from odrive_interface import ODriveInterfaceAPI, ODriveFailure
-from odrive_interface import ChannelBrokenException, ChannelDamagedException
-from odrive_simulator import ODriveInterfaceSimulator
+from .odrive_interface import ODriveInterfaceAPI, ODriveFailure
+from .odrive_interface import ChannelDamagedException #ChannelBrokenException
+from .odrive_simulator import ODriveInterfaceSimulator
 
 class ROSLogger(object):
     """Imitate a standard Python logger, but pass the messages to rospy logging.
@@ -123,7 +123,7 @@ class ODriveNode(object):
         self.status = "disconnected"
         self.status_pub.publish(self.status)
         
-        self.command_queue = Queue.Queue(maxsize=5)
+        self.command_queue = Queue(maxsize=5)
         self.vel_subscribe = rospy.Subscriber("/cmd_vel", Twist, self.cmd_vel_callback, queue_size=2)
         
         self.publish_diagnostics = True
@@ -249,7 +249,7 @@ class ODriveNode(object):
                     else:
                         # must have called connect service from another node
                         self.fast_timer_comms_active = True
-                except (ChannelBrokenException, ChannelDamagedException, AttributeError):
+                except (ChannelDamagedException, AttributeError):
                     rospy.logerr("ODrive USB connection failure in main_loop.")
                     self.status = "disconnected"
                     self.status_pub.publish(self.status)
@@ -323,7 +323,7 @@ class ODriveNode(object):
                     # voltage
                     self.bus_voltage = self.driver.bus_voltage()
                     
-            except (ChannelBrokenException, ChannelDamagedException):
+            except (ChannelDamagedException):
                 rospy.logerr("ODrive USB connection failure in fast_timer." + traceback.format_exc(1))
                 self.fast_timer_comms_active = False
                 self.status = "disconnected"
@@ -357,7 +357,7 @@ class ODriveNode(object):
                 # release motor after 10s stopped
                 if (time_now - self.last_cmd_vel_time).to_sec() > 10.0 and self.driver.engaged():
                     self.driver.release() # and release            
-        except (ChannelBrokenException, ChannelDamagedException):
+        except (ChannelDamagedException):
             rospy.logerr("ODrive USB connection failure in cmd_vel timeout." + traceback.format_exc(1))
             self.fast_timer_comms_active = False
             self.driver = None
@@ -398,7 +398,7 @@ class ODriveNode(object):
                     self.driver.drive(left_linear_val, right_linear_val)
                     self.last_speed = max(abs(left_linear_val), abs(right_linear_val))
                     self.last_cmd_vel_time = time_now
-                except (ChannelBrokenException, ChannelDamagedException):
+                except (ChannelDamagedException):
                     rospy.logerr("ODrive USB connection failure in drive_cmd." + traceback.format_exc(1))
                     self.fast_timer_comms_active = False
                     self.driver = None

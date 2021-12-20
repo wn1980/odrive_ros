@@ -10,7 +10,7 @@ import odrive
 from odrive.enums import *
 
 import fibre
-from fibre import ChannelBrokenException, ChannelDamagedException
+from fibre.protocol import ChannelDamagedException #ChannelBrokenException
 
 default_logger = logging.getLogger(__name__)
 default_logger.setLevel(logging.DEBUG)
@@ -59,7 +59,8 @@ class ODriveInterfaceAPI(object):
         if self.driver:
             self.logger.info("Already connected. Disconnecting and reconnecting.")
         try:
-            self.driver = odrive.find_any(timeout=timeout, logger=self.logger)
+            #self.driver = odrive.find_any(timeout=timeout, logger=self.logger)
+            self.driver = odrive.find_any(timeout=timeout)
             self.axes = (self.driver.axis0, self.driver.axis1)
         except:
             self.logger.error("No ODrive found. Is device powered?")
@@ -239,9 +240,9 @@ class ODriveInterfaceAPI(object):
 
         #self.logger.debug("Setting drive mode.")
         for axis in self.axes:
-            axis.controller.vel_setpoint = 0
+            #axis.controller.vel_setpoint = 0
             axis.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
-            axis.controller.config.control_mode = CTRL_MODE_VELOCITY_CONTROL
+            axis.controller.config.control_mode = CONTROL_MODE_VELOCITY_CONTROL
         
         #self.engaged = True
         return True
@@ -262,8 +263,11 @@ class ODriveInterfaceAPI(object):
             self.logger.error("Not connected.")
             return
         #try:
-        self.left_axis.controller.vel_setpoint = left_motor_val
-        self.right_axis.controller.vel_setpoint = -right_motor_val
+        #self.left_axis.controller.vel_setpoint = left_motor_val
+        #self.right_axis.controller.vel_setpoint = -right_motor_val
+        self.left_axis.controller.input_vel = left_motor_val
+        self.right_axis.controller.input_vel = -right_motor_val
+
         #except (fibre.protocol.ChannelBrokenException, AttributeError) as e:
         #    raise ODriveFailure(str(e))
         
