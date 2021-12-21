@@ -372,7 +372,8 @@ class ODriveNode(object):
         if self.fast_timer_comms_active and not self.command_queue.empty():
             # check to see if we're initialised and engaged motor
             try:
-                if not self.driver.has_prerolled(): #ensure_prerolled():
+                #if not self.driver.has_prerolled(): #ensure_prerolled():
+                if self.has_preroll and not self.driver.has_prerolled(): #ensure_prerolled():
                     rospy.logwarn_throttle(5.0, "ODrive has not been prerolled, ignoring drive command.")
                     motor_command = self.command_queue.get_nowait()
                     return
