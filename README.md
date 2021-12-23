@@ -1,5 +1,5 @@
-# ARCHIVE NOTICE 2021-02-04
-I have taken on a new position no longer have access to an ODrive for testing. Happy to add a maintainer role if anyone wants to step up to it, otherwise this repo will just stay up here as a reference for other implementations. 
+# Note
+A ROS drive for ODrive that is forked from https://github.com/neomanic/odrive_ros, to make it works on Ubuntu 20.04 with ROS Noetic.
 
 # odrive_ros
 ROS driver for the [ODrive motor driver](https://odriverobotics.com/)
