@@ -726,6 +726,7 @@ class ODriveNode(object):
         
         self.old_pos_l = self.new_pos_l
         self.old_pos_r = self.new_pos_r
+        #print(self.encoder_cpr, self.new_pos_l, self.new_pos_r)
         
         # Check for overflow. Assume we can't move more than half a circumference in a single timestep. 
         half_cpr = self.encoder_cpr/2.0
@@ -737,6 +738,7 @@ class ODriveNode(object):
         # counts to metres
         delta_pos_l_m = delta_pos_l / self.m_s_to_value
         delta_pos_r_m = delta_pos_r / self.m_s_to_value
+        #print(delta_pos_l_m,delta_pos_r_m)
     
         # Distance travelled
         d = (delta_pos_l_m+delta_pos_r_m)/2.0  # delta_ps
