@@ -310,9 +310,9 @@ class ODriveNode(object):
                     self.m_s_to_value = self.encoder_cpr/self.tyre_circumference # calculated
                 
                     self.driver.update_time(time_now.to_sec())
-                    self.vel_l = self.driver.left_vel_estimate()   # units: encoder counts/s
+                    self.vel_l = self.driver.left_vel_estimate()   # units: turn/s
                     self.vel_r = -self.driver.right_vel_estimate() # neg is forward for right
-                    self.new_pos_l = self.driver.left_pos()        # units: encoder counts
+                    self.new_pos_l = self.driver.left_pos()        # units: turn
                     self.new_pos_r = -self.driver.right_pos()      # sign!
                     
                     # for temperatures
@@ -729,17 +729,26 @@ class ODriveNode(object):
         #print(self.encoder_cpr, self.new_pos_l, self.new_pos_r)
         
         # Check for overflow. Assume we can't move more than half a circumference in a single timestep. 
-        half_cpr = self.encoder_cpr/2.0
+        #half_cpr = self.encoder_cpr/2.0
+        half_cpr = 0.5
+        """
         if   delta_pos_l >  half_cpr: delta_pos_l = delta_pos_l - self.encoder_cpr
         elif delta_pos_l < -half_cpr: delta_pos_l = delta_pos_l + self.encoder_cpr
         if   delta_pos_r >  half_cpr: delta_pos_r = delta_pos_r - self.encoder_cpr
         elif delta_pos_r < -half_cpr: delta_pos_r = delta_pos_r + self.encoder_cpr
+        """
+        if   delta_pos_l >  half_cpr: delta_pos_l = delta_pos_l - 1.
+        elif delta_pos_l < -half_cpr: delta_pos_l = delta_pos_l + 1.
+        if   delta_pos_r >  half_cpr: delta_pos_r = delta_pos_r - 1.
+        elif delta_pos_r < -half_cpr: delta_pos_r = delta_pos_r + 1.
         
         # counts to metres
-        delta_pos_l_m = delta_pos_l / self.m_s_to_value
-        delta_pos_r_m = delta_pos_r / self.m_s_to_value
+        #delta_pos_l_m = delta_pos_l / self.m_s_to_value
+        #delta_pos_r_m = delta_pos_r / self.m_s_to_value
+        delta_pos_l_m = delta_pos_l * tyre_circumference
+        delta_pos_r_m = delta_pos_r * tyre_circumference
         #print(delta_pos_l_m,delta_pos_r_m)
-    
+  
         # Distance travelled
         d = (delta_pos_l_m+delta_pos_r_m)/2.0  # delta_ps
         th = (delta_pos_r_m-delta_pos_l_m)/wheel_track # works for small angles
@@ -802,8 +811,10 @@ class ODriveNode(object):
         jsm = self.joint_state_msg
         jsm.header.stamp = time_now
         if self.driver:
-            jsm.position[0] = 2*math.pi * self.new_pos_l  / self.encoder_cpr
-            jsm.position[1] = 2*math.pi * self.new_pos_r / self.encoder_cpr
+            #jsm.position[0] = 2*math.pi * self.new_pos_l  / self.encoder_cpr
+            #jsm.position[1] = 2*math.pi * self.new_pos_r / self.encoder_cpr
+            jsm.position[0] = 2*math.pi * self.new_pos_l
+            jsm.position[1] = 2*math.pi * self.new_pos_r
             
         self.joint_state_publisher.publish(jsm)
 

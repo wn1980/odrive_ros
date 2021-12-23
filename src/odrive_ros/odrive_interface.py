@@ -299,10 +299,10 @@ class ODriveInterfaceAPI(object):
         if axis_error:
             return error_string
             
-    def left_vel_estimate(self):  return self.left_axis.encoder.vel_estimate   if self.left_axis  else 0 # units: encoder counts/s
+    def left_vel_estimate(self):  return self.left_axis.encoder.vel_estimate   if self.left_axis  else 0 # units: turn/s
     def right_vel_estimate(self): return self.right_axis.encoder.vel_estimate  if self.right_axis else 0 # neg is forward for right
-    def left_pos(self):           return self.left_axis.encoder.pos_cpr_counts        if self.left_axis  else 0  # units: encoder counts
-    def right_pos(self):          return self.right_axis.encoder.pos_cpr_counts       if self.right_axis else 0   # sign!
+    def left_pos(self):           return self.left_axis.encoder.pos_cpr        if self.left_axis  else 0  # units: turn
+    def right_pos(self):          return self.right_axis.encoder.pos_cpr       if self.right_axis else 0   # sign!
     
     # TODO check these match the right motors, but it doesn't matter for now
     def left_temperature(self):   return self.left_axis.fet_thermistor.temperature  if self.left_axis  else 0. #axis.fet_thermistor.temperature
