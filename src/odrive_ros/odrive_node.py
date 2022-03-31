@@ -104,7 +104,7 @@ class ODriveNode(object):
         self.publish_tf      = get_param('~publish_odom_tf', False)
         self.odom_topic      = get_param('~odom_topic', "odom")
         self.odom_frame      = get_param('~odom_frame', "odom")
-        self.base_frame      = get_param('~base_frame', "base_link")
+        self.base_frame      = get_param('~base_frame', "base_footprint")
         self.odom_calc_hz    = get_param('~odom_calc_hz', 10)
         
         rospy.on_shutdown(self.terminate)
