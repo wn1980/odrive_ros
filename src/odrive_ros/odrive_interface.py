@@ -266,8 +266,8 @@ class ODriveInterfaceAPI(object):
         #try:
         #self.left_axis.controller.vel_setpoint = left_motor_val
         #self.right_axis.controller.vel_setpoint = -right_motor_val
-        self.left_axis.controller.input_vel = left_motor_val
-        self.right_axis.controller.input_vel = -right_motor_val
+        self.left_axis.controller.input_vel = -left_motor_val
+        self.right_axis.controller.input_vel = right_motor_val
 
         #except (fibre.protocol.ChannelBrokenException, AttributeError) as e:
         #    raise ODriveFailure(str(e))
